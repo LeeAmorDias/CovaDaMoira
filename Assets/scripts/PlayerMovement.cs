@@ -11,9 +11,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] 
     private float groundDrag = 5f;
 
-    [SerializeField]
-    private float airMultiplier = 0.5f;
-
     [Header("Ground Check")]
     [SerializeField]
     private float playerHeight = 2f;
@@ -38,12 +35,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // Check if player is grounded
+        // Ground check
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
 
         HandleInput();
 
-        // Apply drag based on grounded state
+        // Set drag
         rb.linearDamping = grounded ? groundDrag : 0f;
     }
 
@@ -60,21 +57,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        // Determine movement direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-        Vector3 moveDir = moveDirection.normalized;
+        Vector3 moveDir = moveDirection;
 
+        // Project movement on slope if grounded
         if (grounded)
         {
-            rb.linearVelocity = new Vector3(moveDir.x * moveSpeed, rb.linearVelocity.y, moveDir.z * moveSpeed);
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, playerHeight * 0.5f + 0.3f, whatIsGround))
+            {
+                moveDir = Vector3.ProjectOnPlane(moveDir, hit.normal).normalized;
+            }
         }
         else
         {
-            rb.linearVelocity = new Vector3(
-                moveDir.x * moveSpeed * airMultiplier,
-                rb.linearVelocity.y,
-                moveDir.z * moveSpeed * airMultiplier
-            );
+            moveDir = moveDir.normalized;
         }
+
+        rb.linearVelocity = new Vector3(moveDir.x * moveSpeed, rb.linearVelocity.y, moveDir.z * moveSpeed);
     }
 }
