@@ -427,21 +427,21 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 560237049}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1da0651eea1c6b54f8d78034521e14f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speedIncreasePerLevel: 3
-  enemyMovement: 10
   agent: {fileID: 560237055}
   minRadius: 10
   maxRadius: 30
-  wanderInterval: 5
+  wanderInterval: 3
   turnSpeed: 5
   angleThreshold: 5
-  detectionRadius: 10
+  detectionRadius: 5
   player: {fileID: 1350381925}
+  gameInfo: {fileID: 1647439738}
 --- !u!195 &560237055
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -452,7 +452,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 4
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 1000
@@ -937,10 +937,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1178,7 +1178,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   pickUpDistance: 3
-  image: {fileID: 610668807}
 --- !u!1 &1752893576
 GameObject:
   m_ObjectHideFlags: 0
