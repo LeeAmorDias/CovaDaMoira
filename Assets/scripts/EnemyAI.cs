@@ -3,24 +3,23 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField]
-    private float speedIncreasePerLevel = 3f;
-    [SerializeField]
-    private float enemyMovement = 10f;
-    [SerializeField]
-    private NavMeshAgent agent;
-    [SerializeField]
-    private float minRadius, maxRadius  = 50f;
-    [SerializeField]
-    private float wanderInterval = 5f;
-    [SerializeField]
-    private float turnSpeed = 5f;
-    [SerializeField]
-    private float angleThreshold = 5f;
+    [Header("Movement")]
+    [SerializeField] private float speedIncreasePerLevel = 3f;
+    [SerializeField] private float enemyMovement = 10f;
+    [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private float minRadius, maxRadius = 50f;
+    [SerializeField] private float wanderInterval = 5f;
+    [SerializeField] private float turnSpeed = 5f;
+    [SerializeField] private float angleThreshold = 5f;
+
+    [Header("Detection")]
+    [SerializeField] private float detectionRadius = 20f;
+    [SerializeField] private Transform player;
 
     private float timer;
     private Vector3 targetPosition;
     private bool isTurning = false;
+    private bool chasingPlayer = false;
 
     private void Awake()
     {
@@ -29,33 +28,35 @@ public class EnemyAI : MonoBehaviour
         timer = wanderInterval;
         GoToRandomPoint();
     }
-    private void Update(){
-        timer += Time.deltaTime;
 
-        if (!isTurning && timer >= wanderInterval && agent.remainingDistance < 0.5f)
+    private void Update()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        chasingPlayer = distanceToPlayer <= detectionRadius;
+
+        if (chasingPlayer)
         {
-            GoToRandomPoint();
-            timer = 0f;
+            // Chase the player directly
+            agent.SetDestination(player.position);
+            RotateTowards(player.position);
         }
-        if (isTurning)
+        else
         {
-            Vector3 direction = (targetPosition - transform.position);
-            direction.y = 0;
+            timer += Time.deltaTime;
 
-            if (direction.sqrMagnitude > 0.01f)
+            if (!isTurning && timer >= wanderInterval && agent.remainingDistance < 0.5f)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime * 100f);
+                GoToRandomPoint();
+                timer = 0f;
+            }
 
-                float angle = Quaternion.Angle(transform.rotation, targetRotation);
-                if (angle < angleThreshold)
-                {
-                    isTurning = false;
-                    agent.SetDestination(targetPosition);
-                }
+            if (isTurning)
+            {
+                RotateTowards(targetPosition);
             }
         }
     }
+
     private void GoToRandomPoint()
     {
         for (int i = 0; i < 30; i++)
@@ -74,4 +75,29 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    private void RotateTowards(Vector3 target)
+    {
+        Vector3 direction = target - transform.position;
+        direction.y = 0;
+
+        if (direction.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime * 100f);
+
+            float angle = Quaternion.Angle(transform.rotation, targetRotation);
+            if (angle < angleThreshold)
+            {
+                isTurning = false;
+                if (!chasingPlayer) agent.SetDestination(targetPosition);
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Show detection radius in editor
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+    }
 }
