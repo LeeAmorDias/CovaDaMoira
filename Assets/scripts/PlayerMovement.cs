@@ -56,8 +56,6 @@ public class PlayerMovement : MonoBehaviour
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
 
         MyInput();
-        SpeedControl();
-
         // handle drag
         if (grounded)
             rb.linearDamping = groundDrag;
@@ -88,27 +86,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        // calculate movement direction
+        // Calculate the desired direction
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        // on ground
-        if(grounded)
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        // Create a flat movement vector
+        Vector3 moveDir = moveDirection.normalized;
 
-        // in air
-        else if(!grounded)
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
-    }
-
-    private void SpeedControl()
-    {
-        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-
-        // limit velocity if needed
-        if(flatVel.magnitude > moveSpeed)
+        if (grounded)
         {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+            rb.linearVelocity = new Vector3(moveDir.x * moveSpeed, rb.linearVelocity.y, moveDir.z * moveSpeed);
+        }
+        else
+        {
+            // In air, apply reduced movement control
+            rb.linearVelocity = new Vector3(
+                moveDir.x * moveSpeed * airMultiplier,
+                rb.linearVelocity.y,
+                moveDir.z * moveSpeed * airMultiplier
+            );
         }
     }
 
