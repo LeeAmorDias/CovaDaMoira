@@ -33,6 +33,7 @@ public class EnemyAI : MonoBehaviour
     private bool chasingPlayer = false;
 
     private int itemsKnown = 0;
+    private int branchesHitKnown = 0;
     private bool destSet;
 
     private void Awake()
@@ -53,6 +54,11 @@ public class EnemyAI : MonoBehaviour
             itemsKnown = gameInfo.ItemsPicked;
             wanderInterval -= 1;
         }
+        if(branchesHitKnown != gameInfo.BranchesHit){
+            branchesHitKnown = gameInfo.BranchesHit;
+            timer = 0f;
+            TeleportToRandomPoint(tpMinRadius-2,tpMaxRadius-2);
+        }
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if(distanceToPlayer <= detectionRadiusKill){
             EndGame();
@@ -68,7 +74,7 @@ public class EnemyAI : MonoBehaviour
 
         if(gameInfo.ItemsPicked != itemsKnown && !chasingPlayer){
             itemsKnown = gameInfo.ItemsPicked;
-            TeleportToRandomPoint();
+            TeleportToRandomPoint(tpMinRadius-2,tpMaxRadius-2);
         }else{
             if (chasingPlayer)
             {
@@ -96,7 +102,7 @@ public class EnemyAI : MonoBehaviour
                         }
                     }else if(!isTurning && timer >= wanderInterval && !IsMoving()){
                         timer = 0f;
-                        TeleportToRandomPoint();
+                        TeleportToRandomPoint(tpMaxRadius,tpMaxRadius);
                     }
                 }else if(!IsMoving() && !isTurning){
                     lookTimer += Time.deltaTime;
@@ -142,11 +148,11 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void TeleportToRandomPoint()
+    private void TeleportToRandomPoint(float min, float max)
     {
         for (int i = 0; i < 30; i++)
         {
-            float distance = Random.Range(tpMinRadius, tpMaxRadius);
+            float distance = Random.Range(min, max);
             Vector2 direction2D = Random.insideUnitCircle.normalized * distance;
             Vector3 randomDirection = new Vector3(direction2D.x, 0, direction2D.y) + player.position;
 
