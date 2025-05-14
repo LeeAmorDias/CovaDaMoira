@@ -26,6 +26,8 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField]
     private Animator animator;
+    [SerializeField]
+    private EnemyVisibilityChecker enemyVisibilityChecker;
     private float timer;
     private float lookTimer = 0;
     private Vector3 targetPosition;
@@ -35,6 +37,10 @@ public class EnemyAI : MonoBehaviour
     private int itemsKnown = 0;
     private int branchesHitKnown = 0;
     private bool destSet;
+    [SerializeField]
+    private GameObject gameObject;
+    [SerializeField]
+    private AudioSource Ambience;
 
     private void Awake()
     {
@@ -43,6 +49,8 @@ public class EnemyAI : MonoBehaviour
     }
     private void EndGame(){
         Time.timeScale = 0f;
+        gameObject.SetActive(true);
+        Ambience.Stop();
     }
 
     private void Update()
@@ -57,7 +65,7 @@ public class EnemyAI : MonoBehaviour
         if(branchesHitKnown != gameInfo.BranchesHit){
             branchesHitKnown = gameInfo.BranchesHit;
             timer = 0f;
-            TeleportToRandomPoint(tpMinRadius-2,tpMaxRadius-2);
+            TeleportToRandomPoint(tpMinRadius,tpMaxRadius-3);
         }
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if(distanceToPlayer <= detectionRadiusKill){
@@ -74,7 +82,7 @@ public class EnemyAI : MonoBehaviour
 
         if(gameInfo.ItemsPicked != itemsKnown && !chasingPlayer){
             itemsKnown = gameInfo.ItemsPicked;
-            TeleportToRandomPoint(tpMinRadius-2,tpMaxRadius-2);
+            TeleportToRandomPoint(tpMinRadius,tpMaxRadius-3);
         }else{
             if (chasingPlayer)
             {
@@ -106,7 +114,7 @@ public class EnemyAI : MonoBehaviour
                     }
                 }else if(!IsMoving() && !isTurning){
                     lookTimer += Time.deltaTime;
-                    if(lookTimer > 7){
+                    if(lookTimer > 4){
                         chasingPlayer = true;
                     }
                     
@@ -150,17 +158,19 @@ public class EnemyAI : MonoBehaviour
 
     private void TeleportToRandomPoint(float min, float max)
     {
-        for (int i = 0; i < 30; i++)
-        {
-            float distance = Random.Range(min, max);
-            Vector2 direction2D = Random.insideUnitCircle.normalized * distance;
-            Vector3 randomDirection = new Vector3(direction2D.x, 0, direction2D.y) + player.position;
-
-            if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        if(!enemyVisibilityChecker.IsEnemyVisible()){
+            for (int i = 0; i < 100; i++)
             {
-                agent.Warp(hit.position);
-                agent.ResetPath();
-                return;
+                float distance = Random.Range(min, max);
+                Vector2 direction2D = Random.insideUnitCircle.normalized * distance;
+                Vector3 randomDirection = new Vector3(direction2D.x, 0, direction2D.y) + player.position;
+
+                if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+                {
+                    agent.Warp(hit.position);
+                    agent.ResetPath();
+                    return;
+                }
             }
         }
     }
