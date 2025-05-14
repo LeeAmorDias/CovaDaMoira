@@ -4,79 +4,116 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float speedIncreasePerLevel = 3f;
+    [SerializeField] private float speedIncrease = 8f;
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private float minRadius, maxRadius = 50f;
+    [SerializeField] private float tpMinRadius, tpMaxRadius = 50f;
     [SerializeField] private float wanderInterval = 5f;
     [SerializeField] private float turnSpeed = 5f;
     [SerializeField] private float angleThreshold = 5f;
 
     [Header("Detection")]
-    [SerializeField] private float detectionRadius = 20f;
+    [SerializeField] private float detectionRadius = 4f;
+    [SerializeField] private float detectionRadiusKill = 2f;
     [SerializeField] private Transform player;
     
     [Header("Game Info")]
     [SerializeField]
     private GameInfo gameInfo;
+    [SerializeField]
+    private GameObject Player;
 
+    [SerializeField]
+    private Animator animator;
     private float timer;
+    private float lookTimer = 0;
     private Vector3 targetPosition;
     private bool isTurning = false;
     private bool chasingPlayer = false;
 
     private int itemsKnown = 0;
-    private bool running;
+    private bool destSet;
 
     private void Awake()
     {
-        agent.updateRotation = false;
         timer = wanderInterval;
         GoToRandomPoint();
+    }
+    private void EndGame(){
+        Time.timeScale = 0f;
     }
 
     private void Update()
     {
-        if(!running && !chasingPlayer){
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if(distanceToPlayer <= detectionRadiusKill){
+            EndGame();
+            return;
+        }
+        else if(!chasingPlayer){
+            
+            chasingPlayer = distanceToPlayer <= detectionRadius;           
+        }
+        if(!IsMoving() && !chasingPlayer && !isTurning){
             RotateTowards(player.position,false);
         }
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        chasingPlayer = distanceToPlayer <= detectionRadius;
+
         if(gameInfo.ItemsPicked != itemsKnown && !chasingPlayer){
             itemsKnown = gameInfo.ItemsPicked;
             TeleportToRandomPoint();
         }else{
             if (chasingPlayer)
             {
-                // Chase the player directly
+                agent.speed = speedIncrease;
                 timer = 0;
-                RotateTowards(player.position, false);
                 agent.SetDestination(player.position);
                 
             }
             else
             {
-                timer += Time.deltaTime;
-                if(timer >= wanderInterval){
-                    if (!isTurning && timer >= wanderInterval && agent.remainingDistance < 0.5f)
-                    {
-                        running = true;
-                        GoToRandomPoint();
+                EnemyVisibilityChecker enemyVisibilityChecker = FindFirstObjectByType<EnemyVisibilityChecker>();    
+                if (isTurning)
+                {
+                    RotateTowards(targetPosition,true);
+                }
+                if(!enemyVisibilityChecker.IsEnemyVisible()){ 
+                    timer += Time.deltaTime;                  
+                    if(Random.Range(1,3) == 1 && timer >= wanderInterval && !IsMoving()){
+                        lookTimer = 0;
+                        if (!isTurning && timer >= wanderInterval && agent.remainingDistance < 0.5f)
+                        {
+                            GoToRandomPoint();
+                            timer = 0f;
+                            RotateTowards(targetPosition,true);
+                        }
+                    }else if(!isTurning && timer >= wanderInterval && !IsMoving()){
                         timer = 0f;
+                        TeleportToRandomPoint();
                     }
-                    if (isTurning)
-                    {
-                        RotateTowards(targetPosition,true);
+                }else if(!IsMoving() && !isTurning){
+                    lookTimer += Time.deltaTime;
+                    if(lookTimer > 7){
+                        chasingPlayer = true;
                     }
-                }else if(timer >= wanderInterval){
-                    timer = 0f;
-                    TeleportToRandomPoint();
-                    running = false; 
+                    
                 }
 
-            }
-            }
 
+            }
+        }
+        
+        if(isTurning || chasingPlayer || IsMoving()){
+            animator.SetTrigger("Run");
+        }else if(!chasingPlayer){
+            animator.SetTrigger("Stop");
+        }
+        
 
+    }
+
+    private bool IsMoving()
+    {
+        return agent.velocity.sqrMagnitude > 0.001f;
     }
 
     private void GoToRandomPoint()
@@ -101,9 +138,9 @@ public class EnemyAI : MonoBehaviour
     {
         for (int i = 0; i < 30; i++)
         {
-            float distance = Random.Range(minRadius, maxRadius);
+            float distance = Random.Range(tpMinRadius, tpMaxRadius);
             Vector2 direction2D = Random.insideUnitCircle.normalized * distance;
-            Vector3 randomDirection = new Vector3(direction2D.x, 0, direction2D.y) + transform.position;
+            Vector3 randomDirection = new Vector3(direction2D.x, 0, direction2D.y) + player.position;
 
             if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 2f, NavMesh.AllAreas))
             {
@@ -129,8 +166,10 @@ public class EnemyAI : MonoBehaviour
             if (angle < angleThreshold)
             {
                 isTurning = false;
-                if (!chasingPlayer && shouldWalk) 
+                if (!chasingPlayer && shouldWalk) {
+                    destSet = true;
                     agent.SetDestination(targetPosition);
+                }  
             }
         }
     }

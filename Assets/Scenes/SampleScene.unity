@@ -432,16 +432,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1da0651eea1c6b54f8d78034521e14f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedIncreasePerLevel: 3
+  speedIncrease: 30
   agent: {fileID: 560237055}
   minRadius: 10
   maxRadius: 30
-  wanderInterval: 3
-  turnSpeed: 5
-  angleThreshold: 5
-  detectionRadius: 5
+  tpMinRadius: 5
+  tpMaxRadius: 10
+  wanderInterval: 10
+  turnSpeed: 100
+  angleThreshold: 3
+  detectionRadius: 3
   player: {fileID: 1350381925}
   gameInfo: {fileID: 1647439738}
+  Player: {fileID: 1350381924}
 --- !u!195 &560237055
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -463,7 +466,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 2
 --- !u!1 &610668805
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +804,7 @@ GameObject:
   - component: {fileID: 1350381928}
   - component: {fileID: 1350381927}
   - component: {fileID: 1350381926}
+  - component: {fileID: 1350381929}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -889,6 +893,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   orientation: {fileID: 1780813048}
+--- !u!114 &1350381929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1350381924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3be87b094c2135446b86b235dc0174f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCamera: {fileID: 963194227}
+  enemy: {fileID: 560237053}
+  maxVisibleDistance: 50
+  checkLineOfSight: 1
 --- !u!1 &1369677443
 GameObject:
   m_ObjectHideFlags: 0
