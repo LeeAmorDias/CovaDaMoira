@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -28,6 +29,8 @@ public class EnemyAI : MonoBehaviour
     private Animator animator;
     [SerializeField]
     private EnemyVisibilityChecker enemyVisibilityChecker;
+    [SerializeField]
+    private AudioSource footSource;
     private float timer;
     private float lookTimer = 0;
     private Vector3 targetPosition;
@@ -40,7 +43,10 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private GameObject gameObject;
     [SerializeField]
-    private AudioSource Ambience;
+    private List<AudioSource> sounds;
+    [SerializeField]
+    private AudioSource scareSound;
+    private bool scareSoundPlayed = false;
 
     private void Awake()
     {
@@ -50,13 +56,22 @@ public class EnemyAI : MonoBehaviour
     private void EndGame(){
         Time.timeScale = 0f;
         gameObject.SetActive(true);
-        Ambience.Stop();
+        foreach(var sound in sounds){
+            sound.Stop();
+        }
+        footSource.Stop();
+        if(!scareSoundPlayed)
+            scareSound.Play();
+            scareSoundPlayed = true;
     }
 
     private void Update()
     {
         if(!IsMoving()){
             agent.speed = 4;
+        }else{
+            if(!footSource.isPlaying)
+                footSource.Play();
         }
         if(itemsKnown != gameInfo.ItemsPicked){
             itemsKnown = gameInfo.ItemsPicked;
@@ -78,6 +93,8 @@ public class EnemyAI : MonoBehaviour
         }
         if(!IsMoving() && !chasingPlayer && !isTurning){
             RotateTowards(player.position,false);
+            if(footSource.isPlaying)
+                footSource.Stop();
         }
 
         if(gameInfo.ItemsPicked != itemsKnown && !chasingPlayer){

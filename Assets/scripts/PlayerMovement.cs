@@ -26,6 +26,15 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 moveDirection;
     private Rigidbody rb;
+    [SerializeField]
+    private AudioClip footstepClip;
+    [SerializeField]
+    private AudioSource footSteps;
+
+    [SerializeField]
+    private float stepDelay = 0.5f; // Time between footsteps
+
+    private float stepTimer = 0f;
 
     private void Start()
     {
@@ -42,6 +51,23 @@ public class PlayerMovement : MonoBehaviour
 
         // Set drag
         rb.linearDamping = grounded ? groundDrag : 0f;
+
+        bool isMoving = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z).magnitude > 0.1f;
+
+        if (isMoving)
+        {
+            stepTimer -= Time.deltaTime;
+
+            if (stepTimer <= 0f)
+            {
+                footSteps.PlayOneShot(footstepClip);
+                stepTimer = stepDelay;
+            }
+        }
+        else
+        {
+            stepTimer = 0f; // Reset timer if player stops
+        }
     }
 
     private void FixedUpdate()
