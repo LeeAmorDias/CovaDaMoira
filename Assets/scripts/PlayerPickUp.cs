@@ -43,12 +43,14 @@ public class PlayerPickUp : MonoBehaviour
                         Loader.SetActive(false);      
                     }
             }else{
-                animator.SetTrigger("Stop Load");
+                timer = 0;
+                if(Loader.activeSelf)
+                    animator.SetTrigger("Stop Load");
                 Loader.SetActive(false);               
                 ispushing = false;
-                timer = 0;
             }
         }else{
+            timer = 0;
             if(objectsPick != null){
                 objectsPick.RemoveOutline();
             }

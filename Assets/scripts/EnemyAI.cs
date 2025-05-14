@@ -46,6 +46,9 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        if(!IsMoving()){
+            agent.speed = 4;
+        }
         if(itemsKnown != gameInfo.ItemsPicked){
             itemsKnown = gameInfo.ItemsPicked;
             wanderInterval -= 1;
@@ -149,7 +152,7 @@ public class EnemyAI : MonoBehaviour
 
             if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 2f, NavMesh.AllAreas))
             {
-                agent.SetDestination(hit.position);
+                agent.Warp(hit.position);
                 agent.ResetPath();
                 return;
             }
