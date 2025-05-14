@@ -28,12 +28,12 @@ public class ObjectsPick : MonoBehaviour
     }
     public void AddOutline(){
         // Add outline by swapping to the outline material
-        Material[] newMaterials = new Material[meshRenderer.materials.Length + 1];
+        Material[] newMaterials = new Material[originalMaterials.Length + 1];
 
         // Copy the original materials
-        for (int i = 0; i < meshRenderer.materials.Length; i++)
+        for (int i = 0; i < originalMaterials.Length; i++)
         {
-            newMaterials[i] = meshRenderer.materials[i];
+            newMaterials[i] = originalMaterials[i];
         }
 
         // Set the last material to the outline material

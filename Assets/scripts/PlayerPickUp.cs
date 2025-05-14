@@ -12,7 +12,12 @@ public class PlayerPickUp : MonoBehaviour
     private float pickUpDistance = 50f;
 
     private ObjectsPick objectsPick;
-    private bool withOutline;
+    private bool ispushing;
+    private float timer;
+    [SerializeField]
+    private Animator animator;
+    [SerializeField]
+    private GameObject Loader;
     // Update is called once per frame
     void Update()
     {
@@ -21,22 +26,31 @@ public class PlayerPickUp : MonoBehaviour
         if (Physics.Raycast(CamTransform.position, CamTransform.forward, out RaycastHit raycastHit, pickUpDistance, pickUpLayer))
         {
             objectsPick = raycastHit.transform.GetComponent<ObjectsPick>();
-            if(withOutline == false && objectsPick != null){
+            if(objectsPick != null){
                 objectsPick.AddOutline();
-                withOutline = true;
             }
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKey(KeyCode.E))
             {
+                    Loader.SetActive(true);
+                    animator.SetTrigger("Load");
+                    ispushing = true;
+                    timer += Time.deltaTime;
                     objectsPick = raycastHit.transform.GetComponent<ObjectsPick>();
-                    if (objectsPick != null)
+                    if (objectsPick != null&& timer > 3f)
                     {
                         objectsPick.pickedUp();
+                        animator.SetTrigger("Stop Load");
+                        Loader.SetActive(false);      
                     }
+            }else{
+                animator.SetTrigger("Stop Load");
+                Loader.SetActive(false);               
+                ispushing = false;
+                timer = 0;
             }
         }else{
-            if(withOutline == true && objectsPick != null){
+            if(objectsPick != null){
                 objectsPick.RemoveOutline();
-                withOutline = false;
             }
         }
 

@@ -8,6 +8,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private float minRadius, maxRadius = 50f;
     [SerializeField] private float tpMinRadius, tpMaxRadius = 50f;
+    [SerializeField] private float radiusToWalk = 30f;
     [SerializeField] private float wanderInterval = 5f;
     [SerializeField] private float turnSpeed = 5f;
     [SerializeField] private float angleThreshold = 5f;
@@ -45,6 +46,10 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        if(itemsKnown != gameInfo.ItemsPicked){
+            itemsKnown = gameInfo.ItemsPicked;
+            wanderInterval -= 1;
+        }
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if(distanceToPlayer <= detectionRadiusKill){
             EndGame();
@@ -78,7 +83,7 @@ public class EnemyAI : MonoBehaviour
                 }
                 if(!enemyVisibilityChecker.IsEnemyVisible()){ 
                     timer += Time.deltaTime;                  
-                    if(Random.Range(1,3) == 1 && timer >= wanderInterval && !IsMoving()){
+                    if(Random.Range(1,3) == 1 && timer >= wanderInterval && !IsMoving() && distanceToPlayer <= radiusToWalk){
                         lookTimer = 0;
                         if (!isTurning && timer >= wanderInterval && agent.remainingDistance < 0.5f)
                         {
@@ -144,7 +149,7 @@ public class EnemyAI : MonoBehaviour
 
             if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 2f, NavMesh.AllAreas))
             {
-                agent.Warp(hit.position);
+                agent.SetDestination(hit.position);
                 agent.ResetPath();
                 return;
             }
