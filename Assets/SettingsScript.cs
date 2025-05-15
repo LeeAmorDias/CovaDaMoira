@@ -6,26 +6,22 @@ public class SettingsScript : MonoBehaviour
     private PlayerSettings playerSettings;
     public void IncreaseVolume()
     {
-        playerSettings.volume += 1;
-    }
-    public void IncreaseSens()
-    {
-        playerSettings.sens += 1;
+        if(playerSettings.volume != 10)
+            playerSettings.volume += 1;
     }
     public void IncreaseBrightness()
     {
-        playerSettings.brightness += 1;
+        if(playerSettings.brightness != 10)
+            playerSettings.brightness += 1;
     }
     public void DecreaseVolume()
     {
-        playerSettings.volume -= 1;
-    }
-    public void DecreaseSens()
-    {
-        playerSettings.sens -= 1;
+        if(playerSettings.volume != 0)
+            playerSettings.volume -= 1;
     }
     public void DecreaseBrightness()
     {
-        playerSettings.brightness -= 1;
+        if(playerSettings.brightness != 0)
+            playerSettings.brightness -= 1;
     }
 }

@@ -22,7 +22,7 @@ public class PlayerHitBranch : MonoBehaviour
     }
     void Update(){
         if(hitTime.timer>1.5f){
-            if(!ambientSound.isPlaying)
+            if(!ambientSound.isPlaying && ambientSound != null)
                 ambientSound.Play();
             owl.TimerCanGo = true;
         }

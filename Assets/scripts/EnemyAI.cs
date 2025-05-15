@@ -1,6 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -43,7 +47,7 @@ public class EnemyAI : MonoBehaviour
     private int branchesHitKnown = 0;
     private bool destSet;
     [SerializeField]
-    private GameObject gameObject;
+    private GameObject EndVid;
     [SerializeField]
     private List<AudioSource> sounds;
     [SerializeField]
@@ -53,106 +57,151 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] 
     private float wanderConeAngle = 45f;
     private bool scareSoundPlayed = false;
+    [SerializeField]
+    private VideoPlayer videoPlayer;
 
     private void Awake()
     {
         timer = wanderInterval;
         GoToRandomPoint();
+
+
     }
-    private void EndGame(){
-        Time.timeScale = 0f;
-        gameObject.SetActive(true);
-        foreach(var sound in sounds){
+    private void EndGame()
+    {
+
+        
+        
+        foreach (var sound in sounds)
+        {
             sound.Stop();
         }
         footSource.Stop();
-        if(!scareSoundPlayed)
+        if (!scareSoundPlayed)
+        {
+            videoPlayer.Play();
             scareSound.Play();
-            scareSoundPlayed = true;
+        }
+        scareSoundPlayed = true;
+        
+        StartCoroutine(playvid());
+        StartCoroutine(LoadMainMenuAfterDelay());
+
+    }
+    IEnumerator playvid()
+    {
+        yield return new WaitForSeconds(0.1f); // Wait 3 seconds
+        EndVid.SetActive(true);
+    }
+    IEnumerator LoadMainMenuAfterDelay()
+    {
+        yield return new WaitForSeconds(3f); // Wait 3 seconds
+        SceneManager.LoadScene("Main Menu"); // Load the scene
     }
 
     private void Update()
     {
-        if(!IsMoving()){
+        if (!IsMoving())
+        {
             agent.speed = 4;
-        }else{
-            if(!footSource.isPlaying)
-                soundCollection.Play(footSource,null,true,0.5f,0.7f);
         }
-        if(itemsKnown != gameInfo.ItemsPicked){
+        else
+        {
+            if (!footSource.isPlaying)
+                soundCollection.Play(footSource, null, true, 0.5f, 0.7f);
+        }
+        if (itemsKnown != gameInfo.ItemsPicked)
+        {
             itemsKnown = gameInfo.ItemsPicked;
             wanderInterval -= 1;
         }
-        if(branchesHitKnown != gameInfo.BranchesHit){
+        if (branchesHitKnown != gameInfo.BranchesHit)
+        {
             branchesHitKnown = gameInfo.BranchesHit;
             timer = 0f;
-            TeleportToRandomPoint(tpMinRadius,tpMaxRadius-3);
+            TeleportToRandomPoint(tpMinRadius, tpMaxRadius - 3);
         }
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        if(distanceToPlayer <= detectionRadiusKill){
+        if (distanceToPlayer <= detectionRadiusKill)
+        {
             EndGame();
             return;
         }
-        else if(!chasingPlayer){
-            
-            chasingPlayer = distanceToPlayer <= detectionRadius;           
+        else if (!chasingPlayer)
+        {
+
+            chasingPlayer = distanceToPlayer <= detectionRadius;
         }
-        if(!IsMoving() && !chasingPlayer && !isTurning){
-            RotateTowards(player.position,false);
-            if(footSource.isPlaying)
+        if (!IsMoving() && !chasingPlayer && !isTurning)
+        {
+            RotateTowards(player.position, false);
+            if (footSource.isPlaying)
                 footSource.Stop();
         }
 
-        if(gameInfo.ItemsPicked != itemsKnown && !chasingPlayer){
+        if (gameInfo.ItemsPicked != itemsKnown && !chasingPlayer)
+        {
             itemsKnown = gameInfo.ItemsPicked;
-            TeleportToRandomPoint(tpMinRadius,tpMaxRadius-3);
-        }else{
+            TeleportToRandomPoint(tpMinRadius, tpMaxRadius - 3);
+        }
+        else
+        {
             if (chasingPlayer)
             {
                 agent.speed = speedIncrease;
                 timer = 0;
                 agent.SetDestination(player.position);
-                
+
             }
             else
             {
-                EnemyVisibilityChecker enemyVisibilityChecker = FindFirstObjectByType<EnemyVisibilityChecker>();    
+                EnemyVisibilityChecker enemyVisibilityChecker = FindFirstObjectByType<EnemyVisibilityChecker>();
                 if (isTurning)
                 {
-                    RotateTowards(targetPosition,true);
+                    RotateTowards(targetPosition, true);
                 }
-                if(!enemyVisibilityChecker.IsEnemyVisible()){ 
-                    timer += Time.deltaTime;                  
-                    if(Random.Range(1,3) == 1 && timer >= wanderInterval && !IsMoving() && distanceToPlayer <= radiusToWalk){
+                if (!enemyVisibilityChecker.IsEnemyVisible())
+                {
+                    timer += Time.deltaTime;
+                    if (Random.Range(1, 3) == 1 && timer >= wanderInterval && !IsMoving() && distanceToPlayer <= radiusToWalk)
+                    {
                         lookTimer = 0;
-                        if (!isTurning && timer >= wanderInterval/2 && agent.remainingDistance < 0.5f)
+                        if (!isTurning && timer >= wanderInterval / 2 && agent.remainingDistance < 0.5f)
                         {
                             GoToRandomPoint();
                             timer = 0f;
-                            RotateTowards(targetPosition,true);
+                            RotateTowards(targetPosition, true);
                         }
-                    }else if(!isTurning && timer >= wanderInterval && !IsMoving()){
-                        timer = 0f;
-                        TeleportToRandomPoint(tpMaxRadius,tpMaxRadius);
                     }
-                }else if(!IsMoving() && !isTurning){
+                    else if (!isTurning && timer >= wanderInterval && !IsMoving())
+                    {
+                        timer = 0f;
+                        TeleportToRandomPoint(tpMaxRadius, tpMaxRadius);
+                    }
+                }
+                else if (!IsMoving() && !isTurning)
+                {
                     lookTimer += Time.deltaTime;
-                    if(lookTimer > 4){
+                    if (lookTimer > 4)
+                    {
                         chasingPlayer = true;
                     }
-                    
+
                 }
 
 
             }
         }
-        
-        if(isTurning || chasingPlayer || IsMoving()){
+
+        if (isTurning || chasingPlayer || IsMoving())
+        {
             animator.SetTrigger("Run");
-        }else if(!chasingPlayer){
+        }
+        else if (!chasingPlayer)
+        {
             animator.SetTrigger("Stop");
         }
-        
+
 
     }
 

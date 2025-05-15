@@ -8,6 +8,10 @@ public class HoverChange : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private Image image;
     [SerializeField]
     private Sprite onTop;
+    [SerializeField]
+    private bool ToActivate;
+    [SerializeField]
+    private GameObject imageObj;
     
 
     private Sprite initialSprite;
@@ -18,15 +22,24 @@ public class HoverChange : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        image.sprite = onTop;
+        if (!ToActivate)
+            image.sprite = onTop;
+        else
+            imageObj.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        image.sprite = initialSprite;
+        if (!ToActivate)
+            image.sprite = initialSprite;
+        else
+            imageObj.SetActive(false);
     }
-    void OnPointerDown(PointerEventData eventData)
+    public void Down()
     {
-        image.sprite = initialSprite;
+        if (!ToActivate)
+            image.sprite = initialSprite;
+        else
+            imageObj.SetActive(false);
     }
 }

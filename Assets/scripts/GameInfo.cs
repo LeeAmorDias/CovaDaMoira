@@ -35,7 +35,7 @@ public class GameInfo : MonoBehaviour
     public void UpdateSettings()
     {
         volume = playerSettings.volume;
-        mainMixer.SetFloat("MasterVolume", Mathf.Log10(volume / 10) * 20);
+        mainMixer.SetFloat("Master", Mathf.Log10(volume / 10) * 20);
 
         sens = playerSettings.sens;
 
