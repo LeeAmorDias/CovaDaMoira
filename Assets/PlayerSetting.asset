@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1a58b3d9a9b70d49b4f0ab7febc9f10, type: 3}
   m_Name: PlayerSetting
   m_EditorClassIdentifier: 
-  volume: 0
-  sens: 0
-  brightness: 0
+  volume: 5
+  sens: 5
+  brightness: 5

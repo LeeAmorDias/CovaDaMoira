@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Rendering.PostProcessing;
 
 public class GameInfo : MonoBehaviour
 {
@@ -7,10 +8,14 @@ public class GameInfo : MonoBehaviour
     private PlayerSettings playerSettings;
     [SerializeField]
     private AudioMixer mainMixer;
+    [SerializeField]
+    private PostProcessVolume PostProcessVolume;
 
-    private int volume;
+    private ColorGrading colorGrading;
+
+    private float volume;
     private int sens; 
-    private int brightness; 
+    private float brightness; 
 
     private int itemsPicked;
     private int branchesHit;
@@ -23,18 +28,21 @@ public class GameInfo : MonoBehaviour
 
     void Awake()
     {
-        UpdateSettings();
+        PostProcessVolume.profile.TryGetSettings(out colorGrading);
+        UpdateSettings();     
     }
 
     public void UpdateSettings()
     {
         volume = playerSettings.volume;
-        mainMixer.SetFloat("MasterVolume", Mathf.Log10(volume/10) * 20 );
+        mainMixer.SetFloat("MasterVolume", Mathf.Log10(volume / 10) * 20);
 
         sens = playerSettings.sens;
 
-        
-        brightness = playerSettings.brightness;   
+        brightness = playerSettings.brightness;
+
+        colorGrading.gamma.value = new Vector4(0f, 0f, 0f, ((brightness + 20) /100)); // Only w is used
+        colorGrading.gamma.overrideState = true;
     }
 
     public void IncreaseItemsPicked()
