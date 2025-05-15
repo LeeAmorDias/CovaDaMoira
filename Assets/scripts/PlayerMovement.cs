@@ -41,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        stepTimer = stepDelay;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
     }
@@ -69,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            stepTimer = 0f; // Reset timer if player stops
+            stepTimer = stepDelay;
         }
     }
 

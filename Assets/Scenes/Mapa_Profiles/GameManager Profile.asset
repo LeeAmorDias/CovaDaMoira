@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: GameManager Profile
   m_EditorClassIdentifier: 
   settings:
+<<<<<<< HEAD
   - {fileID: 2109548714857476501}
 --- !u!114 &2109548714857476501
+=======
+  - {fileID: 87975266954055831}
+--- !u!114 &87975266954055831
+>>>>>>> 3e2a8d24a6c39cbcab462bd76b0c36eeffd475f0
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -38,8 +43,13 @@ MonoBehaviour:
     value: {fileID: 0}
     defaultState: 1
   tonemapper:
+<<<<<<< HEAD
     overrideState: 0
     value: 0
+=======
+    overrideState: 1
+    value: 2
+>>>>>>> 3e2a8d24a6c39cbcab462bd76b0c36eeffd475f0
   toneCurveToeStrength:
     overrideState: 0
     value: 0
@@ -120,8 +130,13 @@ MonoBehaviour:
     overrideState: 0
     value: {x: 1, y: 1, z: 1, w: 0}
   gamma:
+<<<<<<< HEAD
     overrideState: 0
     value: {x: 1, y: 1, z: 1, w: 0}
+=======
+    overrideState: 1
+    value: {x: 1, y: 1, z: 1, w: -0.016949218}
+>>>>>>> 3e2a8d24a6c39cbcab462bd76b0c36eeffd475f0
   gain:
     overrideState: 0
     value: {x: 1, y: 1, z: 1, w: 0}

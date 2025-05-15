@@ -54,6 +54,9 @@ public class PlayerPickUp : MonoBehaviour
             if(objectsPick != null){
                 objectsPick.RemoveOutline();
             }
+            if(Loader.activeSelf)
+                animator.SetTrigger("Stop Load");
+            Loader.SetActive(false);        
         }
 
 
