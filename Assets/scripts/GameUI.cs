@@ -11,6 +11,6 @@ public class GameUI : MonoBehaviour
 
     void Update()
     {
-        LightsPicked.text = gameInfo.ItemsPicked.ToString() + "/" + "7";
+        LightsPicked.text = gameInfo.ItemsPicked.ToString() + "/" + "5";
     }
 }
