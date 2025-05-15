@@ -31,6 +31,8 @@ public class EnemyAI : MonoBehaviour
     private EnemyVisibilityChecker enemyVisibilityChecker;
     [SerializeField]
     private AudioSource footSource;
+    [SerializeField]
+    private AudioSource tpSource;
     private float timer;
     private float lookTimer = 0;
     private Vector3 targetPosition;
@@ -186,6 +188,7 @@ public class EnemyAI : MonoBehaviour
                 {
                     agent.Warp(hit.position);
                     agent.ResetPath();
+                    tpSource.Play();
                     return;
                 }
             }

@@ -12,6 +12,8 @@ public class ObjectsPick : MonoBehaviour
     private Material outlineMaterial;
     [SerializeField]
     private MeshRenderer meshRenderer;
+    [SerializeField]
+    private AudioSource audioOnPick;
 
     private Material[] originalMaterials;
 
@@ -21,6 +23,7 @@ public class ObjectsPick : MonoBehaviour
     
     public void pickedUp(){
         gameInfo.IncreaseItemsPicked();
+        audioOnPick.Play();
         Destroy(this.gameObject);
     }
     public void RemoveOutline(){
