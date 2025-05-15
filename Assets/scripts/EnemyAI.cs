@@ -123,7 +123,7 @@ public class EnemyAI : MonoBehaviour
                 }
                 if(!enemyVisibilityChecker.IsEnemyVisible()){ 
                     timer += Time.deltaTime;                  
-                    if(Random.Range(1,3) == 1 && timer >= wanderInterval/2 && !IsMoving() && distanceToPlayer <= radiusToWalk){
+                    if(Random.Range(1,3) == 1 && timer >= wanderInterval && !IsMoving() && distanceToPlayer <= radiusToWalk){
                         lookTimer = 0;
                         if (!isTurning && timer >= wanderInterval/2 && agent.remainingDistance < 0.5f)
                         {
