@@ -77,7 +77,7 @@ public class EnemyAI : MonoBehaviour
             agent.speed = 4;
         }else{
             if(!footSource.isPlaying)
-                soundCollection.Play(footSource,null,true);
+                soundCollection.Play(footSource,null,true,0.5f,0.7f);
         }
         if(itemsKnown != gameInfo.ItemsPicked){
             itemsKnown = gameInfo.ItemsPicked;
