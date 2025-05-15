@@ -34,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float stepDelay = 0.5f; // Time between footsteps
 
+    [SerializeField]
+    private SoundCollection soundCollection;
+
     private float stepTimer = 0f;
 
     private void Start()
@@ -60,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (stepTimer <= 0f)
             {
-                footSteps.PlayOneShot(footstepClip);
+                soundCollection.Play(footSteps,footstepClip,true);
                 stepTimer = stepDelay;
             }
         }

@@ -48,6 +48,8 @@ public class EnemyAI : MonoBehaviour
     private List<AudioSource> sounds;
     [SerializeField]
     private AudioSource scareSound;
+    [SerializeField]
+    private SoundCollection soundCollection;
     private bool scareSoundPlayed = false;
 
     private void Awake()
@@ -73,7 +75,7 @@ public class EnemyAI : MonoBehaviour
             agent.speed = 4;
         }else{
             if(!footSource.isPlaying)
-                footSource.Play();
+                soundCollection.Play(footSource,null,true);
         }
         if(itemsKnown != gameInfo.ItemsPicked){
             itemsKnown = gameInfo.ItemsPicked;
@@ -119,9 +121,9 @@ public class EnemyAI : MonoBehaviour
                 }
                 if(!enemyVisibilityChecker.IsEnemyVisible()){ 
                     timer += Time.deltaTime;                  
-                    if(Random.Range(1,3) == 1 && timer >= wanderInterval && !IsMoving() && distanceToPlayer <= radiusToWalk){
+                    if(Random.Range(1,3) == 1 && timer >= wanderInterval/2 && !IsMoving() && distanceToPlayer <= radiusToWalk){
                         lookTimer = 0;
-                        if (!isTurning && timer >= wanderInterval && agent.remainingDistance < 0.5f)
+                        if (!isTurning && timer >= wanderInterval/2 && agent.remainingDistance < 0.5f)
                         {
                             GoToRandomPoint();
                             timer = 0f;
@@ -159,21 +161,29 @@ public class EnemyAI : MonoBehaviour
 
     private void GoToRandomPoint()
     {
-        for (int i = 0; i < 30; i++)
-        {
-            float distance = Random.Range(minRadius, maxRadius);
-            Vector2 direction2D = Random.insideUnitCircle.normalized * distance;
-            Vector3 randomDirection = new Vector3(direction2D.x, 0, direction2D.y) + transform.position;
+        Vector3 toPlayer = (player.position - transform.position).normalized;
 
-            if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        for (int i = 0; i < 100; i++)
+        {
+            float angleOffset = Random.Range(-69f, 69f);
+            Vector3 direction = Quaternion.Euler(0, angleOffset, 0) * toPlayer;
+
+            // Scale to random distance
+            float playerDistance = Vector3.Distance(transform.position, player.position);
+            float distance = Random.Range(playerDistance, maxRadius);
+            Vector3 target = transform.position + direction * distance;
+
+            // Sample position on NavMesh
+            if (NavMesh.SamplePosition(target, out NavMeshHit hit, 2f, NavMesh.AllAreas))
             {
                 targetPosition = hit.position;
                 isTurning = true;
-                agent.ResetPath(); // stop movement while turning
+                agent.ResetPath();
                 break;
             }
         }
     }
+
 
     private void TeleportToRandomPoint(float min, float max)
     {
