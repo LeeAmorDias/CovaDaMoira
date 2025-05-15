@@ -35,13 +35,17 @@ public class GameInfo : MonoBehaviour
     public void UpdateSettings()
     {
         volume = playerSettings.volume;
-        mainMixer.SetFloat("Master", Mathf.Log10(volume / 10) * 20);
+        float db = Mathf.Log10(volume / 5f) * 20f;
+        if (db > 20)
+            db = 20;
+        mainMixer.SetFloat("Master", db );
 
         sens = playerSettings.sens;
 
         brightness = playerSettings.brightness;
 
-        colorGrading.gamma.value = new Vector4(0f, 0f, 0f, ((brightness + 20) /100)); // Only w is used
+        float gammaStrength = (brightness + 20f) / 50f;
+        colorGrading.gamma.value = new Vector4(gammaStrength, gammaStrength, gammaStrength, gammaStrength);
         colorGrading.gamma.overrideState = true;
     }
 

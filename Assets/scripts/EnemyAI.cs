@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -36,6 +37,10 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private AudioSource footSource;
     [SerializeField]
+    private AudioSource footSource2;
+    [SerializeField]
+    private AudioClip walk;
+    [SerializeField]
     private AudioSource tpSource;
     private float timer;
     private float lookTimer = 0;
@@ -60,17 +65,14 @@ public class EnemyAI : MonoBehaviour
     [SerializeField]
     private VideoPlayer videoPlayer;
 
+    private float PermalookTimer;
+
     private void Awake()
     {
         timer = wanderInterval;
-
-
     }
     private void EndGame()
     {
-
-        
-        
         foreach (var sound in sounds)
         {
             sound.Stop();
@@ -102,12 +104,12 @@ public class EnemyAI : MonoBehaviour
     {
         if (!IsMoving())
         {
-            agent.speed = 4;
+            agent.speed = 2;
         }
         else
         {
-            if (!footSource.isPlaying)
-                soundCollection.Play(footSource, null, true, 0.5f, 0.7f);
+            soundCollection.Play(footSource,walk , true, 0f, 0.5f, 0.7f);
+            soundCollection.Play(footSource2, walk, true, 0.2f, 0.5f, 0.7f);
         }
         if (itemsKnown != gameInfo.ItemsPicked)
         {
@@ -118,7 +120,8 @@ public class EnemyAI : MonoBehaviour
         {
             branchesHitKnown = gameInfo.BranchesHit;
             timer = 0f;
-            TeleportToRandomPoint(tpMinRadius, tpMaxRadius - 3);
+            agent.SetDestination(player.position);
+            detectionRadius += 0.5f;
         }
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if (distanceToPlayer <= detectionRadiusKill)
@@ -140,6 +143,7 @@ public class EnemyAI : MonoBehaviour
         if (gameInfo.ItemsPicked != itemsKnown && !chasingPlayer)
         {
             itemsKnown = gameInfo.ItemsPicked;
+            TeleportToRandomPoint(tpMinRadius, tpMaxRadius - 3);
             agent.SetDestination(player.position);
         }
         else
@@ -148,7 +152,7 @@ public class EnemyAI : MonoBehaviour
             {
                 agent.speed = speedIncrease;
                 timer = 0;
-                agent.SetDestination(player.position);
+
 
             }
             else
@@ -161,7 +165,7 @@ public class EnemyAI : MonoBehaviour
                 if (!enemyVisibilityChecker.IsEnemyVisible())
                 {
                     timer += Time.deltaTime;
-                    if (Random.Range(1, 3) == 1 && timer >= wanderInterval && !IsMoving() && distanceToPlayer <= radiusToWalk)
+                    if (Random.Range(1, 5) == 1 && timer >= wanderInterval && !IsMoving() && distanceToPlayer <= radiusToWalk)
                     {
                         lookTimer = 0;
                         if (!isTurning && timer >= wanderInterval / 2 && agent.remainingDistance < 0.5f)
@@ -180,7 +184,12 @@ public class EnemyAI : MonoBehaviour
                 else if (!IsMoving() && !isTurning)
                 {
                     lookTimer += Time.deltaTime;
+                    PermalookTimer += Time.deltaTime;
                     if (lookTimer > 4)
+                    {
+                        chasingPlayer = true;
+                    }
+                    if (PermalookTimer > 15)
                     {
                         chasingPlayer = true;
                     }
