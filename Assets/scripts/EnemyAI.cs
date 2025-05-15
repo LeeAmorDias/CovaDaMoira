@@ -50,6 +50,8 @@ public class EnemyAI : MonoBehaviour
     private AudioSource scareSound;
     [SerializeField]
     private SoundCollection soundCollection;
+    [SerializeField] 
+    private float wanderConeAngle = 45f;
     private bool scareSoundPlayed = false;
 
     private void Awake()
@@ -165,7 +167,7 @@ public class EnemyAI : MonoBehaviour
 
         for (int i = 0; i < 100; i++)
         {
-            float angleOffset = Random.Range(-69f, 69f);
+            float angleOffset = Random.Range(-wanderConeAngle, wanderConeAngle);
             Vector3 direction = Quaternion.Euler(0, angleOffset, 0) * toPlayer;
 
             // Scale to random distance
@@ -187,7 +189,7 @@ public class EnemyAI : MonoBehaviour
 
     private void TeleportToRandomPoint(float min, float max)
     {
-        if(!enemyVisibilityChecker.IsEnemyVisible()){
+        if(!enemyVisibilityChecker.IsEnemyVisible() && !IsMoving()){
             for (int i = 0; i < 100; i++)
             {
                 float distance = Random.Range(min, max);
@@ -233,5 +235,33 @@ public class EnemyAI : MonoBehaviour
         // Show detection radius in editor
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
+
+        Gizmos.color = Color.yellow;
+
+        Vector3 forwardToPlayer = (player.position - transform.position).normalized;
+        Vector3 origin = transform.position;
+
+        // Cone angle
+        float angle = wanderConeAngle;
+
+        // Draw left and right boundary lines
+        Vector3 leftDir = Quaternion.Euler(0, -angle, 0) * forwardToPlayer;
+        Vector3 rightDir = Quaternion.Euler(0, angle, 0) * forwardToPlayer;
+
+        // Draw cone boundary lines
+        Gizmos.DrawLine(origin, origin + leftDir * maxRadius);
+        Gizmos.DrawLine(origin, origin + rightDir * maxRadius);
+
+        // Draw arc (approximate)
+        int segments = 20;
+        float step = angle * 2 / segments;
+        Vector3 lastPoint = origin + (Quaternion.Euler(0, -angle, 0) * forwardToPlayer * maxRadius);
+        for (int i = 1; i <= segments; i++)
+        {
+            float currentAngle = -angle + step * i;
+            Vector3 nextPoint = origin + (Quaternion.Euler(0, currentAngle, 0) * forwardToPlayer * maxRadius);
+            Gizmos.DrawLine(lastPoint, nextPoint);
+            lastPoint = nextPoint;
+        }
     }
 }
