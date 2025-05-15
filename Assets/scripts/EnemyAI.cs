@@ -63,7 +63,6 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         timer = wanderInterval;
-        GoToRandomPoint();
 
 
     }
@@ -113,7 +112,7 @@ public class EnemyAI : MonoBehaviour
         if (itemsKnown != gameInfo.ItemsPicked)
         {
             itemsKnown = gameInfo.ItemsPicked;
-            wanderInterval -= 1;
+            wanderInterval -= 2;
         }
         if (branchesHitKnown != gameInfo.BranchesHit)
         {
@@ -129,7 +128,6 @@ public class EnemyAI : MonoBehaviour
         }
         else if (!chasingPlayer)
         {
-
             chasingPlayer = distanceToPlayer <= detectionRadius;
         }
         if (!IsMoving() && !chasingPlayer && !isTurning)
@@ -142,7 +140,7 @@ public class EnemyAI : MonoBehaviour
         if (gameInfo.ItemsPicked != itemsKnown && !chasingPlayer)
         {
             itemsKnown = gameInfo.ItemsPicked;
-            TeleportToRandomPoint(tpMinRadius, tpMaxRadius - 3);
+            agent.SetDestination(player.position);
         }
         else
         {
