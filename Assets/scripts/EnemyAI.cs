@@ -183,7 +183,7 @@ public class EnemyAI : MonoBehaviour
                         TeleportToRandomPoint(tpMaxRadius, tpMaxRadius);
                     }
                 }
-                else if (!IsMoving() && !isTurning)
+                else if (!isTurning)
                 {
                     lookTimer += Time.deltaTime;
                     PermalookTimer += Time.deltaTime;

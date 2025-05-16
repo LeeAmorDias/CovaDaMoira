@@ -6,5 +6,6 @@ public class PlayerSettings : ScriptableObject
     public int volume;
     public int sens;
     public int brightness;
+    public bool win = false;
     
 }

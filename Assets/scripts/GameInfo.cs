@@ -34,6 +34,7 @@ public class GameInfo : MonoBehaviour
     {
         PostProcessVolume.profile.TryGetSettings(out colorGrading);
         UpdateSettings();
+        intro.SetActive(true);
         StartCoroutine(ActivateAfterDelay());
     }
 
@@ -50,7 +51,7 @@ public class GameInfo : MonoBehaviour
     public void UpdateSettings()
     {
         volume = playerSettings.volume;
-        float db = Mathf.Lerp(-60f, 20f, volume / 10f);
+        float db = Mathf.Lerp(-80f, 20f, volume / 10f);
         if (db > 20)
             db = 20;
         mainMixer.SetFloat("Master", db);
@@ -75,6 +76,7 @@ public class GameInfo : MonoBehaviour
 
     private void Update()
     {
+        UpdateSettings();
         if (itemsPicked == 5)
         {
             player.SetActive(false);

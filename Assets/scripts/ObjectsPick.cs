@@ -1,5 +1,4 @@
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,8 +27,6 @@ public class ObjectsPick : MonoBehaviour
         gameInfo.IncreaseItemsPicked();
         audioOnPick.Play();
         audioOnPick2.Play();
-        if (gameInfo.ItemsPicked == 5)
-            SceneManager.LoadScene("Main Menu"); // Load the scene
         Destroy(this.gameObject);
     }
     public void RemoveOutline(){

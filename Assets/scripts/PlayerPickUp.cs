@@ -29,7 +29,7 @@ public class PlayerPickUp : MonoBehaviour
             if(objectsPick != null){
                 objectsPick.AddOutline();
             }
-            if (Input.GetKey(KeyCode.E) || Input.GetMouseButtonDown(0))
+            if (Input.GetKey(KeyCode.E) || Input.GetMouseButton(0))
             {
                     Loader.SetActive(true);
                     animator.SetTrigger("Load");
