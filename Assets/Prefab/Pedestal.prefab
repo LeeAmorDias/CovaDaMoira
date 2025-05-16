@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &9035441869445704837
 Transform:
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5604102216775051142}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1, y: 0.602, z: 4}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 1
@@ -122,6 +122,7 @@ GameObject:
   - component: {fileID: 5184559317849995925}
   - component: {fileID: 2367616686013156341}
   - component: {fileID: 3692236548660303412}
+  - component: {fileID: 3578837047623154781}
   m_Layer: 8
   m_Name: Lampada
   m_TagString: Untagged
@@ -216,6 +217,7 @@ MonoBehaviour:
   outlineMaterial: {fileID: 2100000, guid: 276e507dab070e049ac30f3d563dfd34, type: 2}
   meshRenderer: {fileID: 5184559317849995925}
   audioOnPick: {fileID: 0}
+  audioOnPick2: {fileID: 0}
 --- !u!136 &3692236548660303412
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -239,6 +241,24 @@ CapsuleCollider:
   m_Height: 0.009864991
   m_Direction: 1
   m_Center: {x: 0.001262427, y: 0.0049324916, z: 0}
+--- !u!114 &3578837047623154781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289168816049770906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1431198c978352d479c65fdfed0eecf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oscillateLight: {fileID: 8547067823059518435}
+  intensityMin: 0.8
+  intensityMax: 1.2
+  rangeMin: 3.5
+  rangeMax: 4.5
+  changeSpeed: 1
 --- !u!1 &6812303039185142786
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,8 +302,8 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.68875855, b: 0, a: 1}
-  m_Intensity: 1
-  m_Range: 10
+  m_Intensity: 0.8146713
+  m_Range: 3.5366783
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -344,6 +364,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2624680408724768061}
     m_Modifications:
+    - target: {fileID: 1700001683036918955, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3895954212722794963, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: InitialModule.startSpeed.scalar
       value: 0.1
@@ -352,29 +376,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: VFX_Fire 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5712219488875869251, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7800046302039599656, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.099999994
+      value: 0.09999998
       objectReference: {fileID: 0}
     - target: {fileID: 7800046302039599656, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.099999994
+      value: 0.09999998
       objectReference: {fileID: 0}
     - target: {fileID: 7800046302039599656, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.099999994
+      value: 0.09999998
       objectReference: {fileID: 0}
     - target: {fileID: 7800046302039599656, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.00822
+      value: 0.008219999
       objectReference: {fileID: 0}
     - target: {fileID: 7800046302039599656, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.00607
+      value: 0.006069999
       objectReference: {fileID: 0}
     - target: {fileID: 7800046302039599656, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.00001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7800046302039599656, guid: 29f4c72f9a1d9d446945740c2819895b, type: 3}
       propertyPath: m_LocalRotation.w

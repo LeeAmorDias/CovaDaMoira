@@ -104,12 +104,14 @@ public class EnemyAI : MonoBehaviour
     {
         if (!IsMoving())
         {
-            agent.speed = 2;
+            agent.speed = 4;
         }
         else
         {
-            soundCollection.Play(footSource,walk , true, 0f, 0.5f, 0.7f);
-            soundCollection.Play(footSource2, walk, true, 0.2f, 0.5f, 0.7f);
+            if(footSource != footSource.isPlaying)
+                soundCollection.Play(footSource,null , true, 0f, 0.5f, 0.7f);
+            if(footSource2 != footSource2.isPlaying)
+                soundCollection.Play(footSource2, null, true, 1f, 0.5f, 0.7f);
         }
         if (itemsKnown != gameInfo.ItemsPicked)
         {
@@ -152,9 +154,9 @@ public class EnemyAI : MonoBehaviour
             {
                 agent.speed = speedIncrease;
                 timer = 0;
+                agent.SetDestination(player.position);
 
-
-            }
+            }   
             else
             {
                 EnemyVisibilityChecker enemyVisibilityChecker = FindFirstObjectByType<EnemyVisibilityChecker>();

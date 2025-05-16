@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   volume: 5
   sens: 5
-  brightness: 5
+  brightness: 0

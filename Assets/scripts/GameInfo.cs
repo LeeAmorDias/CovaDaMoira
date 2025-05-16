@@ -1,6 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.SceneManagement;
 
 public class GameInfo : MonoBehaviour
 {
@@ -10,12 +12,14 @@ public class GameInfo : MonoBehaviour
     private AudioMixer mainMixer;
     [SerializeField]
     private PostProcessVolume PostProcessVolume;
+    [SerializeField]
+    private GameObject player, Enemy, intro, victory,uizinho;
 
     private ColorGrading colorGrading;
 
     private float volume;
-    private int sens; 
-    private float brightness; 
+    private int sens;
+    private float brightness;
 
     private int itemsPicked;
     private int branchesHit;
@@ -29,22 +33,33 @@ public class GameInfo : MonoBehaviour
     void Awake()
     {
         PostProcessVolume.profile.TryGetSettings(out colorGrading);
-        UpdateSettings();     
+        UpdateSettings();
+        StartCoroutine(ActivateAfterDelay());
+    }
+
+    IEnumerator ActivateAfterDelay()
+    {
+        yield return new WaitForSeconds(5f);
+        intro.SetActive(false);
+        player.SetActive(true);
+        Enemy.SetActive(true);
+        uizinho.SetActive(true);
+
     }
 
     public void UpdateSettings()
     {
         volume = playerSettings.volume;
-        float db = Mathf.Log10(volume / 5f) * 20f;
+        float db = Mathf.Lerp(-60f, 20f, volume / 10f);
         if (db > 20)
             db = 20;
-        mainMixer.SetFloat("Master", db );
+        mainMixer.SetFloat("Master", db);
 
         sens = playerSettings.sens;
 
         brightness = playerSettings.brightness;
 
-        float gammaStrength = (brightness + 20f) / 50f;
+        float gammaStrength = Mathf.Lerp(0f, 1f, brightness / 10f);
         colorGrading.gamma.value = new Vector4(gammaStrength, gammaStrength, gammaStrength, gammaStrength);
         colorGrading.gamma.overrideState = true;
     }
@@ -53,7 +68,30 @@ public class GameInfo : MonoBehaviour
     {
         itemsPicked++;
     }
-    public void IncreaseBranchesHit(){
+    public void IncreaseBranchesHit()
+    {
         branchesHit++;
+    }
+
+    private void Update()
+    {
+        if (itemsPicked == 5)
+        {
+            player.SetActive(false);
+            Enemy.SetActive(false);
+            uizinho.SetActive(false);
+            victory.SetActive(true);
+            StartCoroutine(DeactivateAfterDelay());
+        }
+        /*if (Input.GetKey(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("Main Menu"); // Load the scene
+        }*/
+    }
+    IEnumerator DeactivateAfterDelay()
+    {
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene("Main Menu"); // Load the scene
+
     }
 }

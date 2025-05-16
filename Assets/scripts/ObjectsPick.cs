@@ -15,6 +15,8 @@ public class ObjectsPick : MonoBehaviour
     private MeshRenderer meshRenderer;
     [SerializeField]
     private AudioSource audioOnPick;
+    [SerializeField]
+    private AudioSource audioOnPick2;
 
     private Material[] originalMaterials;
 
@@ -25,7 +27,8 @@ public class ObjectsPick : MonoBehaviour
     public void pickedUp(){
         gameInfo.IncreaseItemsPicked();
         audioOnPick.Play();
-        if(gameInfo.ItemsPicked == 5)
+        audioOnPick2.Play();
+        if (gameInfo.ItemsPicked == 5)
             SceneManager.LoadScene("Main Menu"); // Load the scene
         Destroy(this.gameObject);
     }
