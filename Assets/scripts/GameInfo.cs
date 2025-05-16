@@ -85,10 +85,10 @@ public class GameInfo : MonoBehaviour
             victory.SetActive(true);
             StartCoroutine(DeactivateAfterDelay());
         }
-        /*if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.Escape))
         {
             SceneManager.LoadScene("Main Menu"); // Load the scene
-        }*/
+        }
     }
     IEnumerator DeactivateAfterDelay()
     {
